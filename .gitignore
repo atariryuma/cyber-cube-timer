@@ -19,3 +19,5 @@ coverage/
 .DS_Store
 Thumbs.db
 *.backup
+dev-dist/
+.claude/settings.local.json

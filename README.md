@@ -1,285 +1,94 @@
-# CYBER CUBE TIMER
+# CYBER CUBE TIMER v3
 
-Eスポーツ風のルービックキューブタイマーWebアプリケーション
+Eスポーツ風のスピードキューブタイマー。ブラウザだけで動き、インストール不要・オフライン対応。
 
-## 特徴
+**▶ 今すぐ使う: https://atariryuma.github.io/cyber-cube-timer/**
 
-### コアメイン機能
-- **高精度タイマー**: ミリ秒単位の正確な計測
-- **WCA準拠スクランブル**: 2x2x2、3x3x3、4x4x4対応
-- **インスペクション機能**: 15秒カウントダウン、+2/DNFペナルティ自動判定
-- **統計機能**: Ao5、Ao12、ベストタイムの自動計算
-- **記録管理**: IndexedDBによるオフライン対応データ永続化
-- **グラフ表示**: タイムの推移をリアルタイムで可視化
-- **CSVエクスポート**: データのバックアップと分析
+- WCA 公式スクランブラーと同じ方式の**ランダム状態スクランブル**（[cubing.js](https://github.com/cubing/cubing.js)）
+- 全 13 種目に対応した **3D / 2D スクランブルプレビュー**（1 手ずつ再生可能）
+- WCA 規則どおりの **インスペクション（+2 / DNF 自動判定）** と Ao5 / Ao12 / Mo3 / Ao50 / Ao100
+- 10 段階の CPU と競う **バトルモード**
+- 記録・動画・設定は**すべて端末内（IndexedDB / localStorage）にのみ保存**。外部送信なし
 
-### UI/UXデザイン
-- **サイバーパンク風デザイン**: ネオンカラーとグロー効果
-- **レスポンシブ対応**: デスクトップ、タブレット、モバイル
-- **アニメーション**: スムーズなトランジションとエフェクト
-- **アチーブメント通知**: 新記録達成時の演出
-- **音声フィードバック**: スタート/ストップ時のビープ音
+## 主な機能
 
-## スクリーンショット
+| 分類 | 内容 |
+| --- | --- |
+| 種目 | 2x2〜7x7、3x3 片手・目隠し、ピラミンクス、スキューブ、メガミンクス、スクエア1、クロック |
+| タイマー | 長押しスタート（時間調整可）、インスペクション（8・12 秒の音声通知）、何かキーで停止、Esc で中断、手入力モード（スタックマット記録用） |
+| 統計 | ベスト / ワースト / 平均 / 標準偏差 / DNF 率、Mo3・Ao5・Ao12・Ao50・Ao100 の現在値と最良値、推移グラフ、分布ヒストグラム |
+| 記録管理 | セッション（種目ごと）、+2 / DNF / コメント編集、新記録の演出、CSV 書き出し、JSON バックアップと復元、旧版 v2 の CSV 読み込み |
+| バトル | 10 段階の CPU（種目ごとに難易度を自動調整）、勝利で次の相手を解放、勝敗・勝利時ベストを記録、CPU のソルブを 3D で再生 |
+| その他 | カメラ録画（端末内保存）、PWA（ホーム画面に追加・オフライン動作）、日本語 / 英語、スマホ・タブレット対応、画面スリープ防止 |
 
-```
-┌─────────────────────────────────────────┐
-│  CYBER CUBE  [SESSION] [CUBE] [SETTINGS]│
-├─────────────────────────────────────────┤
-│  🔀 SCRAMBLE                            │
-│  R U R' U' F2 D' B2 L' F R2...         │
-├─────────────────────────────────────────┤
-│                                         │
-│           ⏱️  12.345                   │
-│                                         │
-│      [ SPACE キーで START ]             │
-├──────────────┬──────────────────────────┤
-│ 📊 STATISTICS│  📜 TIME HISTORY         │
-│ SINGLE 12.34 │  #001  13.45  [+2]      │
-│ Ao5    14.56 │  #002  12.34  🏆        │
-│ Ao12   15.23 │  #003  15.67            │
-│              │  📈 TIME GRAPH          │
-└──────────────┴──────────────────────────┘
-```
+## 操作方法
 
-## 技術スタック
+1. **スペースキー**（スマホは画面）を長押しし、数字が**緑**になったら離す → インスペクション開始
+2. もう一度長押し → 離すと計測開始。**何かキー**を押すと停止
+3. 停止後に表示される `OK / +2 / DNF` でペナルティを付ける。履歴の行をクリックすると詳細編集
 
-### バックエンド
-- **Python 3.10+**
-- **Flask 3.0**: Webフレームワーク
-- **Flask-CORS**: CORS対応
+| キー | 動作 |
+| --- | --- |
+| `Space` | タイマー操作 |
+| `Esc` | インスペクション・計測の中断／ダイアログを閉じる |
+| `N` | 次のスクランブル（待機中） |
+| `Alt+2` / `Alt+D` / `Alt+O` | 直前の記録を +2 / DNF / OK に |
+| `Alt+Z` | 直前の記録を削除 |
+| `Enter` / `B` | タイトル画面でタイムアタック / バトル開始 |
 
-### フロントエンド
-- **HTML5 / CSS3**: マークアップとスタイリング
-- **JavaScript (Vanilla)**: ロジック実装
-- **Chart.js 4.4**: グラフ描画
-- **IndexedDB**: ブラウザ内データベース
-- **Google Fonts**: Orbitron、Rajdhani、Inter、JetBrains Mono
+## 開発
 
-### アーキテクチャ
-- **MVC パターン**
-- **RESTful API**
-- **モジュール分離設計**
+Node.js 22.3 以上が必要です。
 
-## インストール
-
-### 必要要件
-- Python 3.10以上
-- 仮想環境（venv）
-
-### セットアップ手順
-
-1. **リポジトリのクローン**
 ```bash
-cd cyber-cube-timer
+npm install
+npm run dev        # 開発サーバー http://localhost:5173
+npm run check      # lint + 型検査 + テスト
+npm run build      # dist/ に本番ビルド
+npm run preview    # ビルド結果の確認
 ```
 
-2. **仮想環境の作成と有効化**
-```bash
-# Windows
-python -m venv venv
-venv\Scripts\activate
+### 技術構成
 
-# macOS/Linux
-python3 -m venv venv
-source venv/bin/activate
-```
-
-3. **依存パッケージのインストール**
-```bash
-pip install -r requirements.txt
-```
-
-4. **アプリケーションの起動**
-```bash
-python run.py
-```
-
-5. **ブラウザでアクセス**
-```
-http://localhost:5000
-```
-
-## 使い方
-
-### 基本操作
-
-1. **タイマーの開始**
-   - スペースキーを長押し（赤→緑に変化）
-   - キーを離すとスタート
-   - インスペクション有効時は15秒カウントダウンが開始
-
-2. **タイマーの停止**
-   - スペースキーを押す
-   - タイムが自動保存される
-   - 新しいスクランブルが生成される
-
-3. **ペナルティの追加**
-   - 記録の「+2」ボタン: +2秒ペナルティ
-   - 記録の「DNF」ボタン: Did Not Finish
-
-4. **統計の確認**
-   - 左パネルで現在の統計を確認
-   - グラフで推移を可視化
-
-5. **データのエクスポート**
-   - 「EXPORT CSV」ボタンでCSVダウンロード
-
-### キーボードショートカット
-
-- **Space**: タイマー開始/停止
-- **Esc**: 設定モーダルを閉じる
-
-### 設定項目
-
-- **インスペクション有効**: 15秒の観察時間
-- **音声アラート有効**: ビープ音の再生
-- **長押しスタート**: 0.3秒長押しで準備完了
-- **タイマートリガー**: スペースキー/タッチ/両方
-
-## プロジェクト構造
+- [Vite](https://vite.dev/) + TypeScript + [Preact](https://preactjs.com/)（Signals で状態管理）
+- [cubing.js](https://github.com/cubing/cubing.js) — スクランブル生成（Web Worker）・3D 表示
+- [vite-plugin-pwa](https://vite-pwa-org.netlify.app/) — Service Worker によるオフライン対応
+- [Vitest](https://vitest.dev/) — 統計・タイマー状態機械・DB・CSV/バックアップ・バトル判定のテスト
 
 ```
-cyber-cube-timer/
-├── app/
-│   ├── __init__.py          # Flaskアプリ初期化
-│   ├── routes.py            # ルーティング定義
-│   ├── scramble.py          # スクランブル生成ロジック
-│   ├── static/
-│   │   ├── css/
-│   │   │   └── style.css    # Eスポーツ風CSS
-│   │   └── js/
-│   │       ├── app.js       # メインアプリケーション
-│   │       ├── timer.js     # タイマー機能
-│   │       ├── database.js  # IndexedDB操作
-│   │       ├── statistics.js # 統計計算
-│   │       └── graph.js     # グラフ描画
-│   └── templates/
-│       └── index.html       # メインHTML
-├── run.py                   # アプリケーションエントリーポイント
-├── requirements.txt         # Python依存パッケージ
-└── README.md               # このファイル
+src/
+├── lib/            DOM に依存しないロジック（テスト対象）
+│   ├── stats.ts         WCA 方式の平均計算・新記録判定
+│   ├── timerMachine.ts  タイマーの状態機械（インスペクション・ペナルティ）
+│   ├── time.ts          タイム整形・手入力の解析
+│   ├── db.ts            IndexedDB（sessions / solves / videos）
+│   ├── backup.ts        JSON バックアップ・CSV 入出力
+│   ├── battle.ts        CPU 対戦（ティア・タイム生成・戦績）
+│   ├── scramble.ts      cubing.js によるスクランブル生成と先読み
+│   └── events.ts, settings.ts, sound.ts, camera.ts
+├── components/     画面（Preact）
+├── state.ts        アプリ状態とアクション
+├── i18n.ts         日本語 / 英語の文言
+└── styles/main.css
+tests/              Vitest
 ```
 
-## API仕様
+### デプロイ
 
-### GET /api/scramble
+`main` ブランチへの push で GitHub Actions が lint・型検査・テスト・ビルドを行い、GitHub Pages に公開します（`.github/workflows/deploy.yml`）。
+リポジトリの Settings → Pages → Source を **GitHub Actions** にしておく必要があります。
 
-新しいスクランブルを生成
+## v2 からの主な変更
 
-**クエリパラメータ:**
-- `type`: キューブタイプ（`2x2x2`, `3x3x3`, `4x4x4`）デフォルト: `3x3x3`
-
-**レスポンス:**
-```json
-{
-  "success": true,
-  "scramble": "R U R' U' F2 D' B2 L' F R2 U B' D L",
-  "cube_type": "3x3x3"
-}
-```
-
-### GET /api/health
-
-ヘルスチェック
-
-**レスポンス:**
-```json
-{
-  "status": "healthy",
-  "service": "Cyber Cube Timer API"
-}
-```
-
-## データベース構造
-
-### IndexedDB: `CyberCubeTimer`
-
-**Object Store: `times`**
-
-| フィールド | 型 | 説明 |
-|----------|-----|------|
-| id | number | 自動生成ID |
-| time | number | タイム（ミリ秒） |
-| penalty | number | ペナルティ（0 or 2000） |
-| dnf | boolean | DNFフラグ |
-| scramble | string | スクランブル文字列 |
-| cubeType | string | キューブタイプ |
-| session | string | セッション名 |
-| timestamp | number | タイムスタンプ |
-
-## カスタマイズ
-
-### カラースキームの変更
-
-`app/static/css/style.css`の`:root`セクションを編集:
-
-```css
-:root {
-    --neon-cyan: #00f5ff;
-    --neon-magenta: #ff00ff;
-    --neon-yellow: #ffed4e;
-    /* 他のカラー変数... */
-}
-```
-
-### スクランブル長の調整
-
-`app/scramble.py`の各生成関数のデフォルト値を変更:
-
-```python
-@staticmethod
-def generate_3x3(length=20):  # 長さを変更
-    # ...
-```
-
-## トラブルシューティング
-
-### ポート5000が使用中
-```bash
-# run.pyで別のポートを指定
-app.run(debug=True, host='0.0.0.0', port=8000)
-```
-
-### データが保存されない
-- ブラウザのIndexedDBが有効か確認
-- プライベートブラウジングモードでは動作しない場合があります
-- ブラウザの開発者ツールでエラーを確認
-
-### スクランブルが表示されない
-- サーバーが起動しているか確認
-- ブラウザのコンソールでエラーメッセージを確認
-- `/api/health`にアクセスしてAPIが動作しているか確認
-
-## 今後の拡張予定
-
-- [ ] ユーザー認証機能
-- [ ] オンラインランキング
-- [ ] バーチャル3Dキューブ
-- [ ] 複数キューブタイプ対応拡張（Pyraminx、Megaminx等）
-- [ ] ソルブの手順記録（reconstruction）
-- [ ] TPS（Turns Per Second）計算
-- [ ] モバイルアプリ化（PWA）
+- Flask サーバーを廃止し、完全な静的サイト化（GitHub Pages で公開可能に）
+- スクランブルを「ランダムな手順」から **WCA 方式のランダム状態** に変更。全 13 種目に対応
+- 3D 表示を 3x3 固定から全種目対応に（4x4 なのに 3x3 で表示される問題を解消）
+- WCA 規則に沿った平均計算（DNF の扱い、Ao50/100 の 5% 除外、平均の四捨五入・単発の切り捨て）
+- バトルモードの不具合を修正（読み込みのたびに戦績が消える、引き分けが負け扱い、ギブアップ後に二重判定、再戦時に前回のタイムが残る など）
+- 動画を記録本体から分離し、履歴の読み込みを高速化
+- セッション管理・バックアップ / 復元・手入力モード・英語対応・PWA を追加
+- テスト（Vitest）と CI を追加
 
 ## ライセンス
 
-このプロジェクトはMITライセンスの元で公開されています。
-
-## 貢献
-
-プルリクエストを歓迎します！大きな変更の場合は、まずIssueを開いて変更内容を議論してください。
-
-## 作者
-
-Cyber Cube Timer Development Team
-
-## 謝辞
-
-- スピードキューブコミュニティの皆様
-- WCA（World Cube Association）
-- Chart.jsチーム
-- Flaskフレームワーク開発者
-
----
-
-**楽しいスピードキューブライフを！**
+[MIT](LICENSE)。スクランブル生成と 3D 表示には [cubing.js](https://github.com/cubing/cubing.js)（MPL-2.0 / GPL-3.0+）を利用しています。
