@@ -2205,3 +2205,225 @@ textarea {
     word-spacing: 0.1em;
   }
 }
+
+/* ---------------------------------------------------------------- スクランブル手順ガイド */
+
+.chip-btn--guide {
+  border-color: var(--yellow);
+  color: var(--yellow);
+}
+
+.guide {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.guide__hold,
+.guide__note {
+  margin: 0;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius-sm);
+  background: rgba(0, 229, 255, 0.07);
+  border: 1px solid var(--line);
+}
+
+.guide__note {
+  background: rgba(255, 43, 214, 0.08);
+  border-color: rgba(255, 43, 214, 0.35);
+}
+
+.guide__progress {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: var(--font-mono);
+  color: var(--muted);
+}
+
+.guide__progress .progress span {
+  background: linear-gradient(90deg, var(--cyan), var(--green));
+  box-shadow: none;
+  transition: width 0.25s;
+}
+
+.guide__chips {
+  list-style: none;
+  margin: 0;
+  padding: 0.25rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  max-height: 7.5rem;
+  overflow-y: auto;
+}
+
+.guide__chip {
+  min-width: 2.6rem;
+  padding: 0.2rem 0.45rem;
+  border-radius: 7px;
+  border: 1px solid var(--line);
+  background: transparent;
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+}
+
+.guide__chip.is-done {
+  color: var(--muted);
+  opacity: 0.55;
+  text-decoration: line-through;
+  text-decoration-color: rgba(57, 255, 136, 0.6);
+}
+
+.guide__chip.is-current {
+  border-color: var(--yellow);
+  background: rgba(255, 232, 77, 0.18);
+  color: var(--yellow);
+  font-weight: 700;
+  box-shadow: 0 0 12px rgba(255, 232, 77, 0.45);
+}
+
+.guide__main {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  gap: 1rem;
+}
+
+.guide__cube {
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  background: radial-gradient(ellipse at center, rgba(0, 229, 255, 0.08), transparent 70%);
+}
+
+.guide__player {
+  height: 100%;
+  min-height: 300px;
+}
+
+.guide__side {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  min-width: 0;
+}
+
+.move-card {
+  padding: 0.8rem 1rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--yellow);
+  background: rgba(255, 232, 77, 0.06);
+  box-shadow: 0 0 18px rgba(255, 232, 77, 0.15);
+}
+
+.move-card--done {
+  border-color: var(--green);
+  background: rgba(57, 255, 136, 0.07);
+  box-shadow: 0 0 18px rgba(57, 255, 136, 0.2);
+  text-align: center;
+}
+
+.move-card__label {
+  font-family: var(--font-display);
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  color: var(--muted);
+}
+
+.move-card__row {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.move-icon {
+  width: 64px;
+  height: 64px;
+  flex: none;
+}
+
+.move-card__symbol {
+  font-family: var(--font-mono);
+  font-size: clamp(2.2rem, 6vw, 3.4rem);
+  font-weight: 500;
+  color: var(--yellow);
+  line-height: 1.1;
+}
+
+.move-card__title {
+  margin: 0.4rem 0 0.2rem;
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.move-card__hint {
+  margin: 0;
+  color: var(--muted);
+}
+
+.guide__nav {
+  display: grid;
+  grid-template-columns: auto auto 1fr;
+  gap: 0.5rem;
+}
+
+.guide__next {
+  font-size: 1.1rem;
+  min-height: 3rem;
+}
+
+.guide__keys {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.guide__target {
+  margin: 0;
+  padding: 0.6rem 0.75rem;
+  border-radius: var(--radius);
+  border: 1px dashed var(--line-strong);
+}
+
+.guide__target figcaption {
+  font-weight: 700;
+}
+
+.guide__net {
+  height: 150px;
+  min-height: 0;
+}
+
+.guide__net .twisty {
+  min-height: 0;
+}
+
+.guide__skip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 0.75rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+@media (max-width: 860px) {
+  .guide__main {
+    grid-template-columns: 1fr;
+  }
+
+  .guide__player {
+    min-height: 220px;
+  }
+
+  .guide__nav {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .guide__next {
+    grid-column: 1 / -1;
+    grid-row: 1;
+  }
+}

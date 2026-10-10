@@ -1,5 +1,8 @@
+import { useState } from 'preact/hooks';
 import { t } from '../i18n';
-import { refreshScramble, scramble, scrambleError, setCustomScramble, showToast } from '../state';
+import { currentEvent, refreshScramble, scramble, scrambleError, setCustomScramble, showToast } from '../state';
+import { Dialog } from './Dialog';
+import { ScrambleGuide } from './ScrambleGuide';
 
 interface Props {
   disabled?: boolean;
@@ -9,6 +12,7 @@ interface Props {
 export function ScrambleBar({ disabled }: Props) {
   const T = t.value;
   const text = scramble.value;
+  const [guideOpen, setGuideOpen] = useState(false);
 
   const copy = async () => {
     if (!text) return;
@@ -46,6 +50,15 @@ export function ScrambleBar({ disabled }: Props) {
         )}
       </div>
       <div class="scramble-bar__actions">
+        <button
+          type="button"
+          class="chip-btn chip-btn--guide"
+          onClick={() => setGuideOpen(true)}
+          disabled={!text || disabled}
+          title={T.guide.open}
+        >
+          📖 <span class="hide-sm">{T.guide.open}</span>
+        </button>
         <button type="button" class="chip-btn" onClick={copy} disabled={!text} title={T.scramble.copy}>
           ⧉ <span class="hide-sm">{T.scramble.copy}</span>
         </button>
@@ -62,6 +75,9 @@ export function ScrambleBar({ disabled }: Props) {
           ↻ <span class="hide-sm">{T.scramble.next}</span>
         </button>
       </div>
+      <Dialog open={guideOpen && !!text} title={`📖 ${T.guide.title}`} onClose={() => setGuideOpen(false)} wide>
+        {text && <ScrambleGuide event={currentEvent.value} scramble={text} onDone={() => setGuideOpen(false)} />}
+      </Dialog>
     </section>
   );
 }

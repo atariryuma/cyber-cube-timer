@@ -120,6 +120,7 @@ export function SettingsDialog() {
       <h3 class="dialog__section">{S.other}</h3>
       <Toggle k="sound" label={S.sound} />
       <Toggle k="celebrate" label={S.celebrate} />
+      <Toggle k="battleGuide" label={S.battleGuide} />
       <Select
         k="lang"
         label={S.language}

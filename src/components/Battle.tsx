@@ -24,6 +24,7 @@ import {
 } from '../lib/battle';
 import { dialog, timing, view } from '../state';
 import { Dialog } from './Dialog';
+import { ScrambleGuide } from './ScrambleGuide';
 import { useTimer } from './useTimer';
 import { celebrate } from './Celebration';
 
@@ -230,6 +231,7 @@ function Race({
   const [phase, setPhase] = useState<RacePhase>('loading');
   const [scr, setScr] = useState<string | null>(null);
   const [scrError, setScrError] = useState(false);
+  const [guideOpen, setGuideOpen] = useState(false);
   const [result, setResult] = useState<MatchResult | null>(null);
   const [cameraOn, setCameraOn] = useState(false);
   const cpuClock = useSignal('0.00');
@@ -281,7 +283,11 @@ function Race({
       } catch (e) {
         console.error(e);
       }
-      if (!cancelled) setPhase('waiting');
+      if (!cancelled) {
+        setPhase('waiting');
+        // 混ぜ方に慣れていなくても対戦できるよう、最初に手順ガイドを開く
+        if (settings.value.battleGuide) setGuideOpen(true);
+      }
     })();
     return () => {
       cancelled = true;
@@ -460,7 +466,21 @@ function Race({
               ))
             )}
           </div>
+          <div class="scramble-bar__actions">
+            <button
+              type="button"
+              class="chip-btn chip-btn--guide"
+              onClick={() => setGuideOpen(true)}
+              disabled={!scr || inRace || phase !== 'waiting'}
+              title={T.guide.open}
+            >
+              📖 <span class="hide-sm">{T.guide.open}</span>
+            </button>
+          </div>
         </div>
+        <Dialog open={guideOpen && !!scr && phase === 'waiting'} title={`📖 ${T.guide.title}`} onClose={() => setGuideOpen(false)} wide>
+          {scr && <ScrambleGuide event={event} scramble={scr} battle onDone={() => setGuideOpen(false)} onSkip={() => setGuideOpen(false)} />}
+        </Dialog>
       </section>
 
       <div class="race__arena">

@@ -25,6 +25,8 @@ export interface Settings {
   focusMode: boolean;
   /** 新記録の演出 */
   celebrate: boolean;
+  /** バトル開始時にスクランブル手順ガイドを開く */
+  battleGuide: boolean;
 }
 
 const KEY = 'cct:settings';
@@ -41,6 +43,7 @@ export const DEFAULT_SETTINGS: Settings = {
   scrambleView: '3D',
   focusMode: true,
   celebrate: true,
+  battleGuide: true,
 };
 
 const VALIDATORS: { [K in keyof Settings]: (v: unknown) => boolean } = {
@@ -55,6 +58,7 @@ const VALIDATORS: { [K in keyof Settings]: (v: unknown) => boolean } = {
   scrambleView: (v) => v === '3D' || v === '2D' || v === 'off',
   focusMode: (v) => typeof v === 'boolean',
   celebrate: (v) => typeof v === 'boolean',
+  battleGuide: (v) => typeof v === 'boolean',
 };
 
 export function sanitizeSettings(raw: unknown): Settings {
