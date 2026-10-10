@@ -1,0 +1,1709 @@
+/* ============================================
+   CYBER CUBE TIMER - BATTLE MODE
+   3-Column Layout (matching normal mode design)
+   ============================================ */
+
+/* Battle Mode Container */
+#battle-mode-container {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #0a0e27;
+    z-index: 9999;
+}
+
+#battle-mode-container.active {
+    display: block;
+}
+
+/* Opponent Select Screen */
+#battle-opponent-select {
+    display: none;
+    width: 100%;
+    height: 100vh;
+    overflow-y: auto;
+    padding: 40px 20px;
+    position: relative;
+}
+
+#battle-opponent-select.active {
+    display: block;
+}
+
+/* Simple Background (matching normal mode) */
+#battle-opponent-select::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image:
+        linear-gradient(rgba(0, 245, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 245, 255, 0.02) 1px, transparent 1px);
+    background-size: 50px 50px;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Opponent Select Header */
+.opponent-select-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 12px;
+    border: 2px solid rgba(0, 245, 255, 0.3);
+    position: relative;
+    z-index: 1;
+}
+
+.btn-menu, .btn-my-stats {
+    padding: 12px 24px;
+    background: rgba(0, 245, 255, 0.1);
+    border: 2px solid rgba(0, 245, 255, 0.3);
+    border-radius: 8px;
+    color: #00f5ff;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: 'Rajdhani', sans-serif;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-menu:hover, .btn-my-stats:hover {
+    background: rgba(0, 245, 255, 0.2);
+    border-color: #00f5ff;
+    box-shadow: 0 0 15px rgba(0, 245, 255, 0.5);
+}
+
+.btn-icon {
+    font-size: 1.2rem;
+}
+
+.battle-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: #00f5ff;
+    text-shadow: 0 0 20px #00f5ff;
+    letter-spacing: 4px;
+    margin: 0;
+}
+
+.battle-subtitle {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.5rem;
+    color: rgba(255, 255, 255, 0.8);
+    text-align: center;
+    margin-bottom: 30px;
+    letter-spacing: 2px;
+    position: relative;
+    z-index: 1;
+}
+
+/* Opponent Grid */
+.opponent-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+}
+
+/* Opponent Card */
+.opponent-card {
+    background:
+        linear-gradient(135deg, rgba(13, 27, 42, 0.9) 0%, rgba(26, 31, 46, 0.9) 100%),
+        repeating-linear-gradient(
+            90deg,
+            transparent,
+            transparent 2px,
+            rgba(255, 255, 255, 0.02) 2px,
+            rgba(255, 255, 255, 0.02) 3px
+        );
+    border: 2px solid var(--opponent-color, rgba(0, 245, 255, 0.3));
+    border-radius: 12px;
+    padding: 24px;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    min-height: 160px;
+    box-shadow:
+        0 2px 10px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.5);
+}
+
+.opponent-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, transparent 0%, var(--opponent-color, rgba(0, 245, 255, 0.1)) 100%);
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.opponent-card:hover {
+    border-color: var(--opponent-color, #00f5ff);
+    box-shadow: 0 0 20px var(--opponent-color, rgba(0, 245, 255, 0.4));
+    transform: translateY(-4px);
+}
+
+.opponent-card:hover::before {
+    opacity: 0.2;
+}
+
+.opponent-card:hover .opponent-portrait {
+    border-color: var(--opponent-color, #00f5ff);
+    box-shadow: 0 0 15px var(--opponent-color, rgba(0, 245, 255, 0.5));
+}
+
+.opponent-card.locked {
+    opacity: 0.4;
+    cursor: not-allowed;
+    filter: grayscale(100%) brightness(0.5);
+    position: relative;
+}
+
+.opponent-card.locked::before {
+    opacity: 0;
+}
+
+.opponent-card.locked::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(
+        45deg,
+        rgba(0, 0, 0, 0.3) 0px,
+        rgba(0, 0, 0, 0.3) 2px,
+        transparent 2px,
+        transparent 8px
+    );
+    pointer-events: none;
+    z-index: 1;
+    border-radius: 12px;
+}
+
+.opponent-card.locked:hover {
+    transform: none;
+    box-shadow: none;
+    border-color: rgba(255, 0, 0, 0.4);
+}
+
+.opponent-card.locked .opponent-portrait {
+    filter: brightness(0.3) saturate(0);
+}
+
+/* Opponent Portrait */
+.opponent-portrait {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    background:
+        radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.15), transparent 50%),
+        radial-gradient(circle at 70% 70%, rgba(0, 0, 0, 0.4), transparent 50%),
+        linear-gradient(135deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.4) 100%);
+    border: 3px solid var(--opponent-color, rgba(0, 245, 255, 0.5));
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow:
+        0 0 20px var(--opponent-color, rgba(0, 245, 255, 0.3)),
+        inset 0 2px 4px rgba(255, 255, 255, 0.2),
+        inset 0 -2px 4px rgba(0, 0, 0, 0.5);
+    flex-shrink: 0;
+    z-index: 1;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.portrait-icon {
+    font-size: 2.8rem;
+    line-height: 1;
+    transition: all 0.3s ease;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+}
+
+.portrait-rank {
+    font-size: 0.65rem;
+    color: var(--opponent-color, #00f5ff);
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin-top: 4px;
+}
+
+/* Opponent Info */
+.opponent-info {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    justify-content: center;
+    flex: 1;
+    min-width: 0;
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+}
+
+.opponent-name-row {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    flex-wrap: nowrap;
+}
+
+.opponent-rank-main {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--opponent-color, #00f5ff);
+    text-shadow: 0 0 10px var(--opponent-color, rgba(0, 245, 255, 0.5));
+    letter-spacing: 1.5px;
+    white-space: nowrap;
+    transition: all 0.3s ease;
+}
+
+.opponent-name-sub {
+    font-size: 1.05rem;
+    color: rgba(255, 255, 255, 0.8);
+    letter-spacing: 1px;
+    white-space: nowrap;
+}
+
+.opponent-desc {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.65);
+    line-height: 1.5;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    word-break: break-word;
+}
+
+.opponent-difficulty {
+    font-size: 1.05rem;
+    color: #ffd700;
+    letter-spacing: 1px;
+}
+
+/* Opponent Stats Column */
+.opponent-stats-column {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    justify-content: center;
+    width: 150px;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+}
+
+.opponent-stats-column .stat-row {
+    display: flex;
+    flex-direction: column;
+    padding: 8px 12px;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.stat-label-small {
+    font-size: 0.65rem;
+    color: rgba(255, 255, 255, 0.5);
+    letter-spacing: 1.5px;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.opponent-time {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: var(--opponent-color, #00f5ff);
+    text-shadow: 0 0 15px var(--opponent-color, rgba(0, 245, 255, 0.5)), 0 0 30px var(--opponent-color, rgba(0, 245, 255, 0.2));
+    white-space: nowrap;
+    transition: all 0.3s ease;
+}
+
+.record-text {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.9);
+    white-space: nowrap;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+/* Fight Button */
+.btn-select-opponent {
+    padding: 14px 10px;
+    background: linear-gradient(135deg,
+        rgba(255, 7, 58, 0.2) 0%,
+        rgba(255, 7, 58, 0.3) 100%);
+    border: 2px solid rgba(255, 7, 58, 0.6);
+    border-radius: 8px;
+    color: #ff073a;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    font-family: 'Orbitron', monospace;
+    letter-spacing: 1px;
+    text-shadow: 0 0 10px rgba(255, 7, 58, 0.5);
+    white-space: nowrap;
+    width: 110px;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 2;
+    height: fit-content;
+    box-shadow: 0 0 15px rgba(255, 7, 58, 0.3);
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.opponent-card:not(.locked) .btn-select-opponent {
+    background: linear-gradient(135deg,
+        var(--opponent-color) 0%,
+        var(--opponent-color) 100%);
+    border-color: var(--opponent-color);
+    color: #000;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    font-weight: 900;
+    box-shadow: 0 0 20px var(--opponent-color, rgba(0, 245, 255, 0.4));
+}
+
+.opponent-card:not(.locked) .btn-select-opponent:hover {
+    background: linear-gradient(135deg,
+        var(--opponent-color) 0%,
+        var(--opponent-color) 100%);
+    border-color: #fff;
+    box-shadow:
+        0 0 30px var(--opponent-color, rgba(0, 245, 255, 0.8)),
+        0 0 60px var(--opponent-color, rgba(0, 245, 255, 0.4));
+    filter: brightness(1.2);
+    transform: scale(1.15);
+}
+
+.btn-select-opponent:hover {
+    background: linear-gradient(135deg,
+        rgba(255, 7, 58, 0.4) 0%,
+        rgba(255, 7, 58, 0.5) 100%);
+    border-color: #ff073a;
+    box-shadow: 0 0 25px rgba(255, 7, 58, 0.8);
+    transform: scale(1.05);
+}
+
+.btn-select-opponent:disabled,
+.opponent-card.locked .btn-select-opponent {
+    background: rgba(128, 128, 128, 0.2);
+    border-color: rgba(128, 128, 128, 0.3);
+    color: rgba(255, 255, 255, 0.3);
+    cursor: not-allowed;
+    text-shadow: none;
+}
+
+.btn-select-opponent:disabled:hover,
+.opponent-card.locked .btn-select-opponent:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+/* Battle Race Screen */
+#battle-race-screen {
+    display: none;
+    width: 100%;
+    height: 100vh;
+}
+
+#battle-race-screen.active {
+    display: flex;
+}
+
+/* ============================================
+   MAIN BATTLE CONTAINER - 3 COLUMN LAYOUT
+   ============================================ */
+
+.battle-container {
+    display: grid;
+    grid-template-columns: 550px 1fr 550px;
+    gap: 20px;
+    padding: 20px;
+    width: 100%;
+    max-width: 2200px;
+    margin: 0 auto;
+    height: 100vh;
+    box-sizing: border-box;
+}
+
+/* ============================================
+   LEFT PANEL - PLAYER
+   ============================================ */
+
+.battle-left-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    background: rgba(13, 27, 42, 0.7);
+    border: 2px solid rgba(0, 245, 255, 0.3);
+    border-radius: 12px;
+    padding: 18px;
+    box-sizing: border-box;
+    box-shadow: 0 0 30px rgba(0, 245, 255, 0.2), inset 0 0 50px rgba(0, 245, 255, 0.05);
+    height: 100%;
+}
+
+.panel-header {
+    text-align: center;
+    padding: 15px;
+    background: rgba(0, 245, 255, 0.1);
+    border-radius: 8px;
+    border-bottom: 3px solid #00f5ff;
+    flex-shrink: 0;
+}
+
+.panel-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 2rem;
+    font-weight: 900;
+    color: #00f5ff;
+    text-shadow: 0 0 15px #00f5ff, 0 0 30px rgba(0, 245, 255, 0.5);
+    letter-spacing: 3px;
+}
+
+/* Camera Section */
+.battle-camera-section {
+    position: relative;
+    width: 100%;
+    flex: 1;
+    min-height: 300px;
+    background: #000;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 3px solid rgba(0, 245, 255, 0.4);
+    box-shadow: 0 0 20px rgba(0, 245, 255, 0.3), inset 0 0 30px rgba(0, 245, 255, 0.1);
+}
+
+.battle-camera-section video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.camera-label {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: rgba(255, 0, 0, 0.9);
+    color: white;
+    padding: 6px 16px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    box-shadow: 0 0 15px rgba(255, 0, 0, 0.6);
+    animation: pulse 2s ease-in-out infinite;
+}
+
+/* Inspection Overlay */
+.inspection-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+}
+
+.inspection-overlay.active {
+    display: flex;
+}
+
+.inspection-timer {
+    font-family: 'Orbitron', monospace;
+    font-size: 4rem;
+    font-weight: 900;
+    color: #00f5ff;
+    text-shadow: 0 0 20px #00f5ff;
+}
+
+.inspection-timer.warning {
+    color: #ff073a;
+    text-shadow: 0 0 20px #ff073a;
+    animation: pulse 0.5s infinite;
+}
+
+.inspection-label {
+    font-size: 1.2rem;
+    color: rgba(255, 255, 255, 0.8);
+    margin-top: 10px;
+    letter-spacing: 2px;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+/* Battle Stats */
+.battle-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+.stat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 8px;
+    border: 2px solid rgba(0, 245, 255, 0.2);
+    transition: all 0.3s;
+}
+
+.stat-row:hover {
+    border-color: rgba(0, 245, 255, 0.5);
+    background: rgba(0, 0, 0, 0.6);
+}
+
+.stat-label {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.8);
+    letter-spacing: 1.5px;
+    font-weight: 600;
+}
+
+.stat-value {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.6rem;
+    font-weight: 900;
+    color: #00f5ff;
+    text-shadow: 0 0 15px rgba(0, 245, 255, 0.7), 0 0 30px rgba(0, 245, 255, 0.3);
+}
+
+/* ============================================
+   CENTER PANEL - TIMER & CONTROLS
+   ============================================ */
+
+.battle-center-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    justify-content: center;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+/* VS Header */
+.vs-header {
+    text-align: center;
+    padding: 15px;
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 12px;
+    border: 2px solid rgba(0, 245, 255, 0.3);
+}
+
+.vs-text {
+    font-family: 'Orbitron', monospace;
+    font-size: 2rem;
+    font-weight: 900;
+    color: #fff;
+    text-shadow: 0 0 20px #00f5ff;
+    letter-spacing: 4px;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.opponent-name {
+    font-size: 1.5rem;
+    color: #ff073a;
+    text-shadow: 0 0 10px #ff073a;
+    letter-spacing: 2px;
+}
+
+/* Timer Section */
+.battle-timer-section {
+    text-align: center;
+    padding: 30px;
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 12px;
+    border: 2px solid rgba(0, 245, 255, 0.3);
+}
+
+.battle-timer {
+    font-family: 'Orbitron', monospace;
+    font-size: 5rem;
+    font-weight: 900;
+    color: #00f5ff;
+    text-shadow: 0 0 30px #00f5ff;
+    letter-spacing: 4px;
+    margin-bottom: 10px;
+}
+
+.timer-instruction {
+    font-size: 1.2rem;
+    color: rgba(255, 255, 255, 0.6);
+    letter-spacing: 2px;
+}
+
+.pulse-text {
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* Scramble Section */
+.battle-scramble-section {
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 12px;
+    border: 2px solid rgba(0, 245, 255, 0.3);
+}
+
+.scramble-label {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.7);
+    text-align: center;
+    margin-bottom: 10px;
+    letter-spacing: 2px;
+}
+
+.scramble-text {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.3rem;
+    color: #00f5ff;
+    text-align: center;
+    line-height: 1.8;
+    margin-bottom: 15px;
+    padding: 15px;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 8px;
+    word-wrap: break-word;
+}
+
+.scramble-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.btn-scramble {
+    padding: 10px 20px;
+    background: rgba(0, 245, 255, 0.1);
+    border: 2px solid rgba(0, 245, 255, 0.3);
+    border-radius: 8px;
+    color: #00f5ff;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: 'Rajdhani', sans-serif;
+}
+
+.btn-scramble:hover {
+    background: rgba(0, 245, 255, 0.2);
+    border-color: #00f5ff;
+    box-shadow: 0 0 15px rgba(0, 245, 255, 0.5);
+}
+
+/* Action Buttons */
+.battle-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.btn-action {
+    padding: 16px 32px;
+    background: rgba(0, 245, 255, 0.1);
+    border: 2px solid rgba(0, 245, 255, 0.3);
+    border-radius: 8px;
+    color: #00f5ff;
+    font-size: 1.2rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: 'Rajdhani', sans-serif;
+}
+
+.btn-action:hover {
+    background: rgba(0, 245, 255, 0.2);
+    border-color: #00f5ff;
+    box-shadow: 0 0 15px rgba(0, 245, 255, 0.5);
+}
+
+.btn-danger {
+    background: rgba(255, 7, 58, 0.1);
+    border-color: rgba(255, 7, 58, 0.3);
+    color: #ff073a;
+}
+
+.btn-danger:hover {
+    background: rgba(255, 7, 58, 0.2);
+    border-color: #ff073a;
+    box-shadow: 0 0 15px rgba(255, 7, 58, 0.5);
+}
+
+/* ============================================
+   RIGHT PANEL - CPU
+   ============================================ */
+
+.battle-right-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    background: rgba(42, 13, 27, 0.7);
+    border: 2px solid rgba(255, 7, 58, 0.3);
+    border-radius: 12px;
+    padding: 18px;
+    box-sizing: border-box;
+    box-shadow: 0 0 30px rgba(255, 7, 58, 0.2), inset 0 0 50px rgba(255, 7, 58, 0.05);
+    height: 100%;
+}
+
+.battle-right-panel .panel-title {
+    color: #ff073a;
+    text-shadow: 0 0 15px #ff073a, 0 0 30px rgba(255, 7, 58, 0.5);
+}
+
+.battle-right-panel .panel-header {
+    border-color: #ff073a;
+    background: rgba(255, 7, 58, 0.1);
+}
+
+.battle-right-panel .stat-value {
+    color: #ff073a;
+    text-shadow: 0 0 15px rgba(255, 7, 58, 0.7), 0 0 30px rgba(255, 7, 58, 0.3);
+}
+
+.battle-right-panel .stat-row {
+    border-color: rgba(255, 7, 58, 0.2);
+}
+
+.battle-right-panel .stat-row:hover {
+    border-color: rgba(255, 7, 58, 0.5);
+}
+
+/* Cube Section */
+.battle-cube-section {
+    position: relative;
+    width: 100%;
+    flex: 1;
+    min-height: 300px;
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 8px;
+    border: 3px solid rgba(255, 7, 58, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 20px rgba(255, 7, 58, 0.3), inset 0 0 30px rgba(255, 7, 58, 0.1);
+}
+
+#cpu-cube-3d {
+    width: 100%;
+    height: 100%;
+}
+
+.cube-label {
+    position: absolute;
+    bottom: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.9);
+    padding: 8px 20px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: 2px solid rgba(255, 7, 58, 0.5);
+    box-shadow: 0 0 15px rgba(255, 7, 58, 0.4);
+}
+
+.cube-label span {
+    font-size: 1.1rem;
+    color: #ff073a;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-shadow: 0 0 10px rgba(255, 7, 58, 0.6);
+}
+
+#cpu-icon-display {
+    font-size: 1.3rem;
+    filter: drop-shadow(0 0 5px rgba(255, 7, 58, 0.5));
+}
+
+/* ============================================
+   MODAL
+   ============================================ */
+
+.battle-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 10000;
+    justify-content: center;
+    align-items: center;
+}
+
+.battle-modal.active {
+    display: flex;
+}
+
+.modal-content,
+.battle-modal-content {
+    background: rgba(13, 27, 42, 0.95);
+    border: 2px solid rgba(0, 245, 255, 0.3);
+    border-radius: 12px;
+    padding: 30px;
+    max-width: 800px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-header,
+.battle-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(0, 245, 255, 0.2);
+}
+
+.modal-header h3,
+.battle-modal-header h3 {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.8rem;
+    color: #00f5ff;
+    margin: 0;
+}
+
+.btn-close,
+.btn-close-modal {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 2rem;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0;
+    width: 40px;
+    height: 40px;
+    transition: color 0.3s;
+}
+
+.btn-close:hover,
+.btn-close-modal:hover {
+    color: #ff073a;
+}
+
+.modal-body,
+.battle-modal-body {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Stats Summary Grid */
+.stats-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.stat-card {
+    background: rgba(0, 0, 0, 0.4);
+    border: 2px solid rgba(0, 245, 255, 0.3);
+    border-radius: 8px;
+    padding: 15px;
+    text-align: center;
+}
+
+.stat-card .stat-label {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.6);
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+}
+
+.stat-card .stat-value {
+    font-family: 'Orbitron', monospace;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #00f5ff;
+    text-shadow: 0 0 10px rgba(0, 245, 255, 0.5);
+}
+
+.stat-card .stat-value.win {
+    color: #00ff88;
+    text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+}
+
+.stat-card .stat-value.lose {
+    color: #ff073a;
+    text-shadow: 0 0 10px rgba(255, 7, 58, 0.5);
+}
+
+/* Stats by Difficulty */
+.stats-by-difficulty {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.stats-by-difficulty h4 {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.3rem;
+    color: rgba(255, 255, 255, 0.9);
+    margin: 0 0 15px 0;
+    letter-spacing: 1px;
+}
+
+.difficulty-stat-row {
+    display: grid;
+    grid-template-columns: 40px 1fr auto auto;
+    gap: 15px;
+    align-items: center;
+    padding: 12px;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 6px;
+    border-left: 3px solid var(--opponent-color, rgba(0, 245, 255, 0.5));
+    margin-bottom: 10px;
+}
+
+.difficulty-icon {
+    font-size: 1.5rem;
+    text-align: center;
+}
+
+.difficulty-name {
+    font-family: 'Orbitron', monospace;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--opponent-color, #00f5ff);
+    letter-spacing: 1px;
+}
+
+.difficulty-record {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.difficulty-winrate {
+    font-family: 'Orbitron', monospace;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #00f5ff;
+    min-width: 50px;
+    text-align: right;
+}
+
+.scramble-3d-container {
+    width: 100%;
+    height: 500px;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 8px;
+    border: 1px solid rgba(0, 245, 255, 0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.scramble-3d-container #cube-visualizer-container {
+    width: 100% !important;
+    height: 500px !important;
+    display: block !important;
+}
+
+.scramble-3d-container #cube-visualizer-container canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.scramble-controls {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.scramble-controls button {
+    padding: 12px 20px;
+    background: rgba(0, 245, 255, 0.1);
+    border: 2px solid rgba(0, 245, 255, 0.3);
+    border-radius: 8px;
+    color: #00f5ff;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.scramble-controls button:hover {
+    background: rgba(0, 245, 255, 0.2);
+    border-color: #00f5ff;
+    box-shadow: 0 0 15px rgba(0, 245, 255, 0.5);
+}
+
+/* ============================================
+   RESULT MODAL
+   ============================================ */
+
+.result-modal-content {
+    max-width: 600px;
+    text-align: center;
+}
+
+.results-icon {
+    font-size: 5rem;
+    margin-bottom: 20px;
+    animation: scaleIn 0.5s ease-out;
+}
+
+.results-icon.win {
+    filter: drop-shadow(0 0 20px #ffd700);
+}
+
+.results-icon.lose {
+    filter: drop-shadow(0 0 20px #ff073a);
+}
+
+@keyframes scaleIn {
+    from {
+        transform: scale(0);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.results-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: #00f5ff;
+    text-shadow: 0 0 20px #00f5ff;
+    letter-spacing: 4px;
+    margin: 0 0 20px 0;
+}
+
+.unlock-notification {
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+    border: 2px solid #ffd700;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 20px 0;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #ffd700;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.results-times {
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 8px;
+    padding: 20px;
+    margin: 20px 0;
+}
+
+.result-time {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.result-time:last-of-type {
+    border-bottom: none;
+}
+
+.result-label {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.7);
+    letter-spacing: 1px;
+}
+
+.result-value {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #00f5ff;
+    text-shadow: 0 0 10px rgba(0, 245, 255, 0.5);
+}
+
+.result-diff {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.results-stats {
+    font-size: 1.2rem;
+    color: rgba(255, 255, 255, 0.8);
+    margin: 20px 0;
+    padding: 15px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+}
+
+.results-actions {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.btn-result-action {
+    padding: 12px 20px;
+    background: rgba(0, 245, 255, 0.1);
+    border: 2px solid rgba(0, 245, 255, 0.3);
+    border-radius: 8px;
+    color: #00f5ff;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: 'Rajdhani', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn-result-action .btn-icon {
+    font-size: 1.2rem;
+}
+
+.btn-result-action .btn-text {
+    white-space: nowrap;
+}
+
+.btn-result-action.primary {
+    background: rgba(0, 245, 255, 0.2);
+    border-color: #00f5ff;
+}
+
+.btn-result-action.primary:hover {
+    background: rgba(0, 245, 255, 0.3);
+    box-shadow: 0 0 20px rgba(0, 245, 255, 0.6);
+    transform: translateY(-2px);
+}
+
+.btn-result-action.secondary {
+    background: rgba(255, 7, 58, 0.1);
+    border-color: rgba(255, 7, 58, 0.3);
+    color: #ff073a;
+}
+
+.btn-result-action.secondary:hover {
+    background: rgba(255, 7, 58, 0.2);
+    border-color: #ff073a;
+    box-shadow: 0 0 20px rgba(255, 7, 58, 0.6);
+    transform: translateY(-2px);
+}
+
+.btn-result-action:hover {
+    background: rgba(0, 245, 255, 0.2);
+    border-color: #00f5ff;
+    box-shadow: 0 0 15px rgba(0, 245, 255, 0.5);
+    transform: translateY(-2px);
+}
+
+.btn-result-action.next-level {
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+    border-color: #ffd700;
+    color: #ffd700;
+}
+
+.btn-result-action.next-level:hover {
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.3), rgba(255, 165, 0, 0.3));
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+}
+
+/* ============================================
+   RESPONSIVE ADJUSTMENTS
+   ============================================ */
+
+/* Opponent Selection Screen - Responsive */
+@media (max-width: 1400px) {
+    .opponent-grid {
+        max-width: 1200px;
+    }
+
+    .opponent-card {
+        padding: 20px;
+        min-height: 140px;
+        gap: 16px;
+    }
+
+    .opponent-portrait {
+        width: 85px;
+        height: 85px;
+    }
+
+    .portrait-icon {
+        font-size: 2.5rem;
+    }
+
+    .opponent-stats-column {
+        width: 135px;
+    }
+
+    .btn-select-opponent {
+        width: 100px;
+        padding: 12px 18px;
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 1100px) {
+    .opponent-grid {
+        grid-template-columns: 1fr;
+        max-width: 700px;
+    }
+
+    .opponent-grid > .opponent-card:nth-child(5) {
+        max-width: 100%;
+    }
+
+    .opponent-card {
+        padding: 20px;
+        min-height: 130px;
+    }
+}
+
+@media (max-width: 640px) {
+    .opponent-card {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 15px;
+        padding: 18px;
+        min-height: 0;
+    }
+
+    .opponent-portrait {
+        width: 80px;
+        height: 80px;
+        align-self: center;
+    }
+
+    .portrait-icon {
+        font-size: 2.3rem;
+    }
+
+    .opponent-info {
+        text-align: center;
+    }
+
+    .opponent-name-row {
+        justify-content: center;
+    }
+
+    .opponent-stats-column {
+        flex-direction: row;
+        width: 100%;
+        gap: 10px;
+    }
+
+    .opponent-stats-column .stat-row {
+        flex: 1;
+    }
+
+    .btn-select-opponent {
+        width: 100%;
+        margin-top: 5px;
+    }
+}
+
+/* Battle Race Screen - Responsive */
+
+/* Large screens to medium desktops (1400px - 1200px) */
+@media (max-width: 1400px) {
+    .battle-container {
+        grid-template-columns: 380px 1fr 380px;
+        gap: 15px;
+        padding: 15px;
+    }
+
+    .panel-title {
+        font-size: 1.6rem;
+    }
+
+    .battle-timer {
+        font-size: 4rem;
+    }
+
+    .stat-value {
+        font-size: 1.4rem;
+    }
+}
+
+/* Medium desktops to tablets landscape (1200px - 1024px) */
+@media (max-width: 1200px) {
+    .battle-container {
+        grid-template-columns: 320px 1fr 320px;
+        gap: 12px;
+        padding: 12px;
+    }
+
+    .battle-left-panel,
+    .battle-right-panel {
+        padding: 12px;
+        gap: 12px;
+    }
+
+    .panel-title {
+        font-size: 1.4rem;
+    }
+
+    .battle-camera-section,
+    .battle-cube-section {
+        min-height: 240px;
+    }
+
+    .battle-timer {
+        font-size: 3.5rem;
+    }
+
+    .scramble-text {
+        font-size: 1.1rem;
+        padding: 12px;
+    }
+
+    .stat-label {
+        font-size: 0.85rem;
+    }
+
+    .stat-value {
+        font-size: 1.3rem;
+    }
+
+    .btn-action {
+        font-size: 1rem;
+        padding: 12px 20px;
+    }
+}
+
+/* Tablets landscape to portrait (1024px - 768px) */
+@media (max-width: 1024px) {
+    .battle-container {
+        grid-template-columns: 240px 1fr 240px;
+        gap: 10px;
+        padding: 10px;
+    }
+
+    .battle-left-panel,
+    .battle-right-panel {
+        padding: 10px;
+        gap: 10px;
+    }
+
+    .panel-header {
+        padding: 10px;
+    }
+
+    .panel-title {
+        font-size: 1.2rem;
+        letter-spacing: 2px;
+    }
+
+    .battle-camera-section,
+    .battle-cube-section {
+        min-height: 180px;
+    }
+
+    .camera-label,
+    .cube-label {
+        padding: 4px 10px;
+        font-size: 0.75rem;
+    }
+
+    .cube-label span {
+        font-size: 0.85rem;
+    }
+
+    #cpu-icon-display {
+        font-size: 1rem;
+    }
+
+    .battle-stats {
+        gap: 8px;
+    }
+
+    .stat-row {
+        padding: 8px 10px;
+    }
+
+    .stat-label {
+        font-size: 0.75rem;
+    }
+
+    .stat-value {
+        font-size: 1.1rem;
+    }
+
+    .battle-center-panel {
+        gap: 15px;
+        padding: 15px;
+    }
+
+    .vs-text {
+        font-size: 1.6rem;
+        letter-spacing: 3px;
+    }
+
+    .opponent-name {
+        font-size: 1.2rem;
+    }
+
+    .battle-timer {
+        font-size: 3rem;
+    }
+
+    .timer-instruction {
+        font-size: 1rem;
+    }
+
+    .scramble-label {
+        font-size: 0.85rem;
+    }
+
+    .scramble-text {
+        font-size: 0.95rem;
+        padding: 10px;
+        line-height: 1.6;
+    }
+
+    .btn-scramble {
+        padding: 8px 14px;
+        font-size: 0.9rem;
+    }
+
+    .btn-action {
+        font-size: 0.95rem;
+        padding: 10px 16px;
+    }
+}
+
+/* Small tablets and large phones (768px - 640px) */
+@media (max-width: 768px) {
+    .battle-container {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        padding: 12px;
+        height: auto;
+        min-height: 100vh;
+    }
+
+    .battle-left-panel,
+    .battle-right-panel {
+        display: flex;
+        flex-direction: row;
+        height: auto;
+        padding: 12px;
+        gap: 12px;
+    }
+
+    /* Compact horizontal layout for side panels */
+    .battle-left-panel .panel-header,
+    .battle-right-panel .panel-header {
+        display: none;
+    }
+
+    .battle-camera-section,
+    .battle-cube-section {
+        width: 180px;
+        min-height: 180px;
+        flex-shrink: 0;
+    }
+
+    .battle-stats {
+        flex: 1;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .stat-row {
+        flex: 1;
+        min-width: calc(50% - 4px);
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 8px;
+    }
+
+    .stat-label {
+        font-size: 0.7rem;
+        margin-bottom: 4px;
+    }
+
+    .stat-value {
+        font-size: 1.2rem;
+    }
+
+    .battle-center-panel {
+        order: -1;
+        gap: 12px;
+        padding: 12px;
+    }
+
+    .battle-timer {
+        font-size: 3.5rem;
+    }
+
+    .scramble-text {
+        font-size: 0.95rem;
+    }
+
+    .battle-actions {
+        flex-wrap: wrap;
+    }
+
+    .btn-action {
+        flex: 1;
+        min-width: calc(50% - 5px);
+        font-size: 0.9rem;
+        padding: 12px 16px;
+    }
+}
+
+/* Mobile phones (< 640px) */
+@media (max-width: 640px) {
+    .battle-container {
+        gap: 10px;
+        padding: 10px;
+    }
+
+    .battle-left-panel,
+    .battle-right-panel {
+        flex-direction: column;
+        align-items: center;
+        padding: 10px;
+        gap: 10px;
+    }
+
+    .battle-camera-section,
+    .battle-cube-section {
+        width: 100%;
+        max-width: 280px;
+        min-height: 220px;
+    }
+
+    .battle-stats {
+        width: 100%;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .stat-row {
+        min-width: 100%;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .stat-label {
+        font-size: 0.8rem;
+    }
+
+    .stat-value {
+        font-size: 1.3rem;
+    }
+
+    .vs-header {
+        padding: 10px;
+    }
+
+    .vs-text {
+        font-size: 1.4rem;
+        margin-bottom: 6px;
+    }
+
+    .opponent-name {
+        font-size: 1rem;
+    }
+
+    .battle-timer-section {
+        padding: 20px;
+    }
+
+    .battle-timer {
+        font-size: 2.8rem;
+    }
+
+    .timer-instruction {
+        font-size: 0.9rem;
+    }
+
+    .battle-scramble-section {
+        padding: 15px;
+    }
+
+    .scramble-text {
+        font-size: 0.85rem;
+        padding: 10px;
+        line-height: 1.5;
+    }
+
+    .scramble-actions {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .btn-scramble {
+        width: 100%;
+    }
+
+    .btn-action {
+        min-width: 100%;
+        font-size: 0.95rem;
+    }
+}

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CYBER CUBE TIMER - Esports Speedcubing</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&family=Inter:wght@400;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+    <!-- Chart.js for graphs -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/battle-mode-new.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/title-screen.css') }}">
+</head>
+<body>
+    <!-- Title Screen -->
+    {% include 'partials/title-screen.html' %}
+
+    <!-- Background Effects -->
+    {% include 'partials/background-effects.html' %}
+
+    <!-- Header -->
+    {% include 'partials/header.html' %}
+
+    <!-- Time Attack Mode -->
+    {% include 'partials/time-attack-mode.html' %}
+
+    <!-- Battle Mode -->
+    {% include 'partials/battle-mode.html' %}
+
+    <!-- Modals -->
+    {% include 'partials/modals.html' %}
+
+    <!-- Three.js ES Module -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"
+            }
+        }
+    </script>
+
+    <!-- Custom Scripts -->
+    <script src="{{ url_for('static', filename='js/util.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/i18n.js') }}"></script>
+    <script type="module" src="{{ url_for('static', filename='js/cube-visualizer.js') }}"></script>
+    <script type="module" src="{{ url_for('static', filename='js/battle-cube-visualizer.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/database.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/statistics.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/graph.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/camera.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/timer.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/race-animation.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/battle-timer.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/battle-mode.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/title-screen.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+# 秘密鍵・証明書（自己署名でも公開しない）
+certs/
+*.pem
+*.pfx
+
+# Python（旧版）
+__pycache__/
+*.pyc
+venv/
+
+# Node / ビルド成果物
+node_modules/
+dist/
+coverage/
+*.local
+
+# エディタ・OS
+.vscode/
+.DS_Store
+Thumbs.db
+*.backup
